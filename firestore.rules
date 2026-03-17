@@ -1,0 +1,142 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: customers, suppliers, petty_cash, daily_summaries, cheques, 
+    //             stock_items, stock_movements, marketing_campaigns, 
+    //             notifications, app_settings, tally_configs
+    // All documents have a 'uid' field representing the owner.
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "arshadberakahgt@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    }
+
+    function hasOnlyAllowedFields(allowedFields) {
+      return request.resource.data.keys().hasOnly(allowedFields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    
+    function isValidPettyCash(data) {
+      return data.amount is number && data.amount >= 0 &&
+             data.type in ['income', 'expense'] &&
+             data.payment_method is string &&
+             (!('customer_name' in data) || data.customer_name is string) &&
+             (!('due_date' in data) || data.due_date is string);
+    }
+
+    function isValidStockItem(data) {
+      return data.name is string && data.name.size() > 0 &&
+             data.sku is string &&
+             (!('cost_price' in data) || data.cost_price is number) &&
+             (!('selling_price' in data) || data.selling_price is number);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /petty_cash/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && isValidPettyCash(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidPettyCash(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /daily_summaries/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /cheques/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /stock_items/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && isValidStockItem(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidStockItem(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /stock_movements/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /marketing_campaigns/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /marketing_logs/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /notifications/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /app_settings/{id} {
+      allow read, write: if isOwner(id) || isAdmin();
+    }
+
+    match /tasks/{id} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && uidUnchanged();
+      allow update: if isDocOwner() && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+    }
+  }
+}

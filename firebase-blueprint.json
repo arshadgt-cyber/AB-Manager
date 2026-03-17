@@ -1,0 +1,240 @@
+{
+  "entities": {
+    "PettyCashEntry": {
+      "title": "PettyCashEntry",
+      "description": "Daily cash transactions",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "payment_method": { "type": "string", "enum": ["cash", "card", "online", "cheque", "credit"] },
+        "amount": { "type": "number" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "reference_number": { "type": "string" },
+        "customer_name": { "type": "string" },
+        "due_date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["pending", "cleared", "overdue", "cancelled"] },
+        "is_archived": { "type": "boolean" },
+        "is_dismissed": { "type": "boolean" },
+        "uid": { "type": "string" }
+      },
+      "required": ["date", "type", "amount", "category", "uid"]
+    },
+    "GeneralTask": {
+      "title": "GeneralTask",
+      "description": "User defined tasks and reminders",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "datetime": { "type": "string" },
+        "category": { "type": "string" },
+        "is_completed": { "type": "boolean" },
+        "uid": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["title", "datetime", "uid"]
+    },
+    "DailyCashSummary": {
+      "title": "DailyCashSummary",
+      "description": "End-of-day reconciliation",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "opening_balance": { "type": "number" },
+        "total_cash_income": { "type": "number" },
+        "total_card_income": { "type": "number" },
+        "total_online_income": { "type": "number" },
+        "total_cheque_income": { "type": "number" },
+        "total_cash_expense": { "type": "number" },
+        "total_card_expense": { "type": "number" },
+        "total_online_expense": { "type": "number" },
+        "total_cheque_expense": { "type": "number" },
+        "closing_balance": { "type": "number" },
+        "notes": { "type": "string" },
+        "closed_by": { "type": "string" },
+        "is_closed": { "type": "boolean" },
+        "uid": { "type": "string" }
+      },
+      "required": ["date", "opening_balance", "uid"]
+    },
+    "Cheque": {
+      "title": "Cheque",
+      "description": "Cheque lifecycle management",
+      "type": "object",
+      "properties": {
+        "cheque_type": { "type": "string", "enum": ["outgoing", "incoming"] },
+        "payee_name": { "type": "string" },
+        "amount": { "type": "number" },
+        "amount_in_words": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "bank_name": { "type": "string" },
+        "cheque_number": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "deposited", "cleared", "bounced", "cancelled", "replaced", "void"] },
+        "is_archived": { "type": "boolean" },
+        "is_dismissed": { "type": "boolean" },
+        "due_date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" },
+        "print_count": { "type": "number" },
+        "last_printed_date": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["payee_name", "amount", "date", "bank_name", "uid"]
+    },
+    "StockItem": {
+      "title": "StockItem",
+      "description": "Inventory management with profit tracking",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "sku": { "type": "string" },
+        "category": { "type": "string" },
+        "unit": { "type": "string", "enum": ["pcs", "kg", "ltr", "box", "pack", "meter", "sqm", "dozen"] },
+        "current_stock": { "type": "number" },
+        "reorder_level": { "type": "number" },
+        "cost_price": { "type": "number" },
+        "standard_sell_price": { "type": "number" },
+        "selling_price": { "type": "number" },
+        "profit_per_unit": { "type": "number" },
+        "profit_percentage": { "type": "number" },
+        "valuation_method": { "type": "string", "enum": ["FIFO", "average"] },
+        "stock_value": { "type": "number" },
+        "location": { "type": "string" },
+        "supplier_id": { "type": "string" },
+        "barcode": { "type": "string" },
+        "image_url": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "discontinued", "out_of_stock"] },
+        "notes": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["name", "sku", "uid"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Track inventory movements",
+      "type": "object",
+      "properties": {
+        "stock_item_id": { "type": "string" },
+        "item_name": { "type": "string" },
+        "type": { "type": "string", "enum": ["in", "out", "adjustment", "return", "damage", "transfer"] },
+        "quantity": { "type": "number" },
+        "unit_price": { "type": "number" },
+        "total_value": { "type": "number" },
+        "date": { "type": "string", "format": "date" },
+        "reference_type": { "type": "string" },
+        "reference_number": { "type": "string" },
+        "party_name": { "type": "string" },
+        "party_id": { "type": "string" },
+        "balance_after": { "type": "number" },
+        "notes": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["stock_item_id", "type", "quantity", "date", "uid"]
+    },
+    "MarketingCampaign": {
+      "title": "MarketingCampaign",
+      "description": "AI-powered marketing automation",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string", "enum": ["promotional", "thank_you", "review_request", "reminder", "announcement", "festival"] },
+        "platform": { "type": "string", "enum": ["whatsapp", "instagram", "facebook", "all"] },
+        "content": { "type": "string" },
+        "image_url": { "type": "string" },
+        "attachments": { "type": "array", "items": { "type": "object" } },
+        "extra_details": { "type": "string" },
+        "target_audience": { "type": "string" },
+        "customer_ids": { "type": "array", "items": { "type": "string" } },
+        "scheduled_date": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "pending_approval", "approved", "scheduled", "sent", "cancelled"] },
+        "approved_by": { "type": "string" },
+        "sent_count": { "type": "number" },
+        "opened_count": { "type": "number" },
+        "response_count": { "type": "number" },
+        "ai_generated": { "type": "boolean" },
+        "language": { "type": "string", "enum": ["english", "arabic", "hindi", "urdu"] },
+        "uid": { "type": "string" }
+      },
+      "required": ["title", "content", "uid"]
+    },
+    "MarketingLog": {
+      "title": "MarketingLog",
+      "description": "Logs of triggered marketing automation",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "product_name": { "type": "string" },
+        "status": { "type": "string", "enum": ["success", "failed"] },
+        "channels": { "type": "array", "items": { "type": "string" } },
+        "timestamp": { "type": "string" },
+        "error": { "type": "string" }
+      },
+      "required": ["uid", "product_name", "status", "channels"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System notifications",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "target_role": { "type": "string" },
+        "reference_type": { "type": "string" },
+        "reference_id": { "type": "string" },
+        "is_read": { "type": "boolean" },
+        "action_url": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["title", "message", "type", "uid"]
+    },
+    "AppSettings": {
+      "title": "AppSettings",
+      "description": "App configuration",
+      "type": "object",
+      "properties": {
+        "company_name": { "type": "string" },
+        "currency": { "type": "string" },
+        "currency_symbol": { "type": "string" },
+        "financial_year_start": { "type": "string" },
+        "theme": { "type": "string" },
+        "language": { "type": "string" },
+        "cheque_reminder_days": { "type": "array", "items": { "type": "number" } },
+        "low_stock_alert_enabled": { "type": "boolean" },
+        "credit_overdue_days": { "type": "number" },
+        "auto_backup_enabled": { "type": "boolean" },
+        "petty_cash_categories": { "type": "array", "items": { "type": "string" } },
+        "payment_methods": { "type": "array", "items": { "type": "string" } },
+        "banks": { 
+          "type": "array", 
+          "items": { 
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "alias": { "type": "string" }
+            }
+          } 
+        },
+        "reminder_intervals": { "type": "array", "items": { "type": "number" } },
+        "daily_report_time": { "type": "string" },
+        "task_categories": { "type": "array", "items": { "type": "string" } },
+        "cheque_alerts_enabled": { "type": "boolean" },
+        "alert_sound": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "petty_cash": { "schema": "PettyCashEntry", "description": "Petty cash entries" },
+    "daily_summaries": { "schema": "DailyCashSummary", "description": "Daily cash summaries" },
+    "cheques": { "schema": "Cheque", "description": "Cheque collection" },
+    "stock_items": { "schema": "StockItem", "description": "Inventory items" },
+    "stock_movements": { "schema": "StockMovement", "description": "Inventory movements" },
+    "marketing_campaigns": { "schema": "MarketingCampaign", "description": "Marketing campaigns" },
+    "marketing_logs": { "schema": "MarketingLog", "description": "Marketing automation logs" },
+    "notifications": { "schema": "Notification", "description": "System notifications" },
+    "app_settings": { "schema": "AppSettings", "description": "App settings" }
+  }
+}

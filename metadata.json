@@ -1,0 +1,9 @@
+{
+  "name": "AB Manager",
+  "description": "Complete business management system for UAE SMEs featuring Petty Cash, Cheque Management, Stock Inventory, and AI-powered Marketing Automation via n8n.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
